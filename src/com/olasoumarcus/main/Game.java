@@ -15,6 +15,10 @@ import javax.swing.JFrame;
 
 import com.olasoumarcus.entities.GameObject;
 import com.olasoumarcus.entities.Player;
+import com.olasoumarcus.graphics.SpriteSheet;
+import com.olasoumarcus.world.World;
+
+import jdk.jshell.spi.SPIResolutionException;
 
 public class Game extends Canvas implements Runnable, KeyListener {
 
@@ -25,21 +29,22 @@ public class Game extends Canvas implements Runnable, KeyListener {
 	public static JFrame frame;
 	private final int WIDTH = 160;
 	private final int HEIGHT = 120;
-	private final int SCALE = 5;
+	private final int SCALE = 4;
 	private Thread thread;
 	private boolean isRunning;
 	private BufferedImage image;
 	
 	public List<GameObject> gameObjects;
 	private Player player;
+	public static World world;
 
 	public Game() {
+		world = new World("/sprites/gfx/Map.png");
 		addKeyListener(this);
 		this.setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
 		initFrame();
 		gameObjects = new ArrayList<GameObject>();
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-		
 		player = new Player(80,80,100,100);
 		gameObjects.add(player);
 		requestFocus();
@@ -91,12 +96,14 @@ public class Game extends Canvas implements Runnable, KeyListener {
 
 		Graphics g = image.getGraphics();
 		
-		g.setColor(new Color(0,255,0));
+		g.setColor(new Color(0,0,0));
 		g.fillRect(0, 0, WIDTH, HEIGHT);
 		g.dispose();
 		g = bs.getDrawGraphics();
 		g.drawImage(image, 0, 0, WIDTH * SCALE, HEIGHT * SCALE, null);
 		
+		
+		world.render(g);
 		for (GameObject gameObject : gameObjects) {
 			gameObject.render(g);
 		}
