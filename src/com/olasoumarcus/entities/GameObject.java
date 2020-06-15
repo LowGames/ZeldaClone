@@ -5,21 +5,25 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 import com.olasoumarcus.graphics.SpriteSheet;
+import com.olasoumarcus.main.Game;
+import com.olasoumarcus.world.World;
 
 public class GameObject {
-
+	public static BufferedImage LIFE = Game.OBJECT_SPRITES.getSprite(80, 0, 16, 16);
+	public static BufferedImage WEAPON = Game.OBJECT_SPRITES.getSprite(3*16, 4*16, 16, 16);
+	public static BufferedImage ENEMY_HORSE = Game.ENEMY_SPRITE.getSprite(4*16, 16, 16, 16);
+	
 	protected double x;
 	protected double y;
 	protected int width;
 	protected int height;
-	protected SpriteSheet sprite;
+	private SpriteSheet sprite;
 	
 	public GameObject(double x, double y, int width, int height) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
-		sprite = new SpriteSheet("/sprites/gfx/Player.png");
 	}
 	
 	public int getX() {
@@ -27,6 +31,10 @@ public class GameObject {
 	}
 	
 	public void setX(int value) {
+		this.x = value;
+	}
+	
+	public void setY(int value) {
 		this.x = value;
 	}
 

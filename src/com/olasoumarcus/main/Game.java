@@ -27,26 +27,30 @@ public class Game extends Canvas implements Runnable, KeyListener {
 	 */
 	private static final long serialVersionUID = 1L;
 	public static JFrame frame;
-	private final int WIDTH = 160;
-	private final int HEIGHT = 120;
-	private final int SCALE = 4;
+	public static final int WIDTH = 240;
+	public static final int HEIGHT = 160;
+	private final int SCALE = 2;
 	private Thread thread;
 	private boolean isRunning;
 	private BufferedImage image;
 	
-	public List<GameObject> gameObjects;
-	private Player player;
+	public static List<GameObject> gameObjects;
+	public static Player player;
 	public static World world;
+	public static SpriteSheet OBJECT_SPRITES;
+	public static SpriteSheet ENEMY_SPRITE;
+	public static SpriteSheet PLAYER_SPRITE;
 
 	public Game() {
+		loadSprites();
+		gameObjects = new ArrayList<GameObject>();
+		player = new Player(80,80,100,100);
+		gameObjects.add(player);
 		world = new World("/sprites/gfx/Map.png");
 		addKeyListener(this);
 		this.setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
 		initFrame();
-		gameObjects = new ArrayList<GameObject>();
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-		player = new Player(80,80,100,100);
-		gameObjects.add(player);
 		requestFocus();
 	}
 
@@ -109,7 +113,13 @@ public class Game extends Canvas implements Runnable, KeyListener {
 		}
 
 		bs.show();
-	}	
+	}
+	
+	private void loadSprites() {
+		OBJECT_SPRITES = new SpriteSheet("/sprites/gfx/objects.png");
+		ENEMY_SPRITE = new SpriteSheet("/sprites/gfx/Enemy.png");
+		PLAYER_SPRITE = new SpriteSheet("/sprites/gfx/Player.png");
+	}
 
 	@Override
 	public void run() {
