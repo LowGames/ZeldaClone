@@ -29,7 +29,7 @@ public class Game extends Canvas implements Runnable, KeyListener {
 	public static JFrame frame;
 	public static final int WIDTH = 240;
 	public static final int HEIGHT = 160;
-	private final int SCALE = 2;
+	private final int SCALE = 3;
 	private Thread thread;
 	private boolean isRunning;
 	private BufferedImage image;
@@ -105,8 +105,7 @@ public class Game extends Canvas implements Runnable, KeyListener {
 		g.dispose();
 		g = bs.getDrawGraphics();
 		g.drawImage(image, 0, 0, WIDTH * SCALE, HEIGHT * SCALE, null);
-		
-		
+
 		world.render(g);
 		for (GameObject gameObject : gameObjects) {
 			gameObject.render(g);

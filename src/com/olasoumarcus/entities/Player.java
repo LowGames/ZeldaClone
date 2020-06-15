@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 
 import com.olasoumarcus.main.Game;
 import com.olasoumarcus.world.Camera;
+import com.olasoumarcus.world.World;
 
 public class Player extends GameObject {
 
@@ -69,23 +70,23 @@ public class Player extends GameObject {
 
 	public void tick() {
 		moved = false;
-		if (right) {
+		if (right && World.isFree((int)x+speed, (int)y)) {
 			moved = true;
 			this.x += speed;
 			dir = right_dir;
 		}
 
-		if (left) {
+		if (left && World.isFree((int)x-speed, (int)y)) {
 			moved = true;
 			this.x -= speed;
 			dir = left_dir;
 		}
 
-		if (up) {
+		if (up && World.isFree((int)x, (int)y+speed)) {
 			moved = true;
 			dir = top_dir;
 			this.y -= speed;
-		} else if (down) {
+		} else if (down && World.isFree((int)x, (int)y-speed)) {
 			moved = true;
 			dir = down_dir;
 			this.y += speed;

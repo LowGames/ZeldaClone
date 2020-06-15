@@ -11,9 +11,10 @@ import com.olasoumarcus.main.Game;
 
 public class World {
 
-	private Tile[] tiles;
+	private static Tile[] tiles;
 	public static int WIDTH, HEIGHT;
 	public static SpriteSheet PIECES_WORLD_SPRITE;
+	public static final int TILE_SIZE = 16;
 	
 	public World(String path) {
 		PIECES_WORLD_SPRITE = new SpriteSheet("/sprites/gfx/Overworld.png");		
@@ -23,7 +24,7 @@ public class World {
 			map.getRGB(0, 0, map.getWidth(), map.getHeight(), pixels, 0, map.getWidth());
 			WIDTH = map.getWidth();
 			HEIGHT = map.getHeight();
-			this.tiles = new Tile[WIDTH * HEIGHT];
+			tiles = new Tile[WIDTH * HEIGHT];
 			for (int xx = 0; xx < map.getWidth(); xx++) {
 				for (int yy = 0; yy < map.getHeight(); yy++) {
 					int pixel = pixels[xx + (yy * map.getWidth())];
@@ -31,11 +32,11 @@ public class World {
 
 					switch (pixel) {
 					case Elements.Wall: {
-						tiles[xx + (yy*WIDTH)] = new FloorTile(xx*16, yy*16, Tile.WALL);
+						tiles[xx + (yy*WIDTH)] = new WallTile(xx*16, yy*16, Tile.WALL);
 						break;
 					}
 					case Elements.WallWorld: {
-						tiles[xx + (yy*WIDTH)] = new FloorTile(xx*16, yy*16, Tile.WallWolrd);
+						tiles[xx + (yy*WIDTH)] = new WallTile(xx*16, yy*16, Tile.WallWolrd);
 						break;
 					}					
 					case Elements.Life: {
@@ -78,4 +79,26 @@ public class World {
 			}
 		}
 	}
+	
+	public static boolean isFree(int xnext, int ynext) {
+		
+		return true;
+		/* int x1 = xnext / TILE_SIZE;
+		int y1 = ynext / TILE_SIZE;
+		
+		int x2 = (xnext + TILE_SIZE -1)  / TILE_SIZE;
+		int y2 = ynext / TILE_SIZE;
+		
+		int x3 = xnext/ TILE_SIZE;
+		int y3 = (ynext + TILE_SIZE -1) / TILE_SIZE;
+		
+		int x4 = (xnext + TILE_SIZE -1) / TILE_SIZE;
+		int y4 = (ynext + TILE_SIZE -1)  / TILE_SIZE;
+		
+		return !(
+				tiles[x1 + (y1*World.WIDTH)] instanceof WallTile &&
+				tiles[x2 + (y2*World.WIDTH)] instanceof WallTile &&
+				tiles[x3 + (y3*World.WIDTH)] instanceof WallTile &&
+				tiles[x4 + (y4*World.WIDTH)] instanceof WallTile);*/
+	}	
 }
