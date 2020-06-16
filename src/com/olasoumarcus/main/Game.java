@@ -10,12 +10,14 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import javax.swing.JFrame;
 
 import com.olasoumarcus.entities.GameObject;
 import com.olasoumarcus.entities.Player;
 import com.olasoumarcus.graphics.SpriteSheet;
+import com.olasoumarcus.graphics.UI;
 import com.olasoumarcus.world.World;
 
 import jdk.jshell.spi.SPIResolutionException;
@@ -29,21 +31,26 @@ public class Game extends Canvas implements Runnable, KeyListener {
 	public static JFrame frame;
 	public static final int WIDTH = 240;
 	public static final int HEIGHT = 160;
-	private final int SCALE = 3;
+	private final int SCALE = 6;
 	private Thread thread;
 	private boolean isRunning;
 	private BufferedImage image;
 	
 	public static List<GameObject> gameObjects;
+	public static List<GameObject> enemies;
 	public static Player player;
 	public static World world;
 	public static SpriteSheet OBJECT_SPRITES;
 	public static SpriteSheet ENEMY_SPRITE;
 	public static SpriteSheet PLAYER_SPRITE;
+	public static Random rand;
+	public static UI ui;
 
 	public Game() {
+		rand = new Random();
 		loadSprites();
 		gameObjects = new ArrayList<GameObject>();
+		enemies = new ArrayList<GameObject>();
 		player = new Player(80,80,100,100);
 		gameObjects.add(player);
 		world = new World("/sprites/gfx/Map.png");
@@ -51,6 +58,7 @@ public class Game extends Canvas implements Runnable, KeyListener {
 		this.setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
 		initFrame();
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+		ui = new UI();
 		requestFocus();
 	}
 
@@ -110,6 +118,8 @@ public class Game extends Canvas implements Runnable, KeyListener {
 		for (GameObject gameObject : gameObjects) {
 			gameObject.render(g);
 		}
+		
+	    ui.render(g);
 
 		bs.show();
 	}

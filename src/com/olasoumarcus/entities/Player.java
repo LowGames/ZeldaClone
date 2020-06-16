@@ -1,7 +1,10 @@
 package com.olasoumarcus.entities;
 
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.olasoumarcus.main.Game;
 import com.olasoumarcus.world.Camera;
@@ -19,6 +22,8 @@ public class Player extends GameObject {
 	private BufferedImage[] rightPlayer;
 	private int frames = 0, maxFrames = 5, index = 0, maxIndex = 2;
 	private boolean moved;
+	public double life = 100;
+	public static final int MAXLIFE = 100;
 
 	// walker down row 0
 	// walker up row 1
@@ -106,5 +111,33 @@ public class Player extends GameObject {
 		
 		Camera.x  = this.getX() - (Game.WIDTH/2);
 		Camera.y  = this.getY() - (Game.HEIGHT/2);
+		
+		checkCollisionLifePack();
+	}
+	
+	public void checkCollisionLifePack() {
+		
+		for (int i = 0; i < Game.gameObjects.size(); i++) {
+			GameObject gm = Game.gameObjects.get(i);
+			if (gm == this) continue;
+			
+			if (gm instanceof LifePack) {
+			   if (IsColliding(gm.getX(), gm.getY())) {
+				   System.out.println("Aumentou life");
+				   life += 10;
+				   
+				   if (life > 100) {
+					   life = 100;  
+				   }
+			   }		
+			}
+		}
+	}
+	
+	public boolean IsColliding(int xnext, int ynext) {
+		Rectangle targetcurrent = new Rectangle(xnext, ynext,World.TILE_SIZE, World.TILE_SIZE);
+		Rectangle player = new Rectangle(this.getX(), this.getY(),World.TILE_SIZE, World.TILE_SIZE);
+
+		return player.intersects(targetcurrent);
 	}
 }

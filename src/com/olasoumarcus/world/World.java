@@ -52,6 +52,7 @@ public class World {
 					case Elements.Enemy: {						
 						Enemy en = new Enemy(xx*16, yy*16, 16, 16);
 						Game.gameObjects.add(en);
+						Game.enemies.add(en);
 						break;
 					}
 					case Elements.Player: {
