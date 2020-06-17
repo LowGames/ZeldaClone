@@ -3,6 +3,7 @@ package com.olasoumarcus.main;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -29,9 +30,9 @@ public class Game extends Canvas implements Runnable, KeyListener {
 	 */
 	private static final long serialVersionUID = 1L;
 	public static JFrame frame;
-	public static final int WIDTH = 240;
-	public static final int HEIGHT = 160;
-	private final int SCALE = 6;
+	public static final int WIDTH = 360;
+	public static final int HEIGHT = 240;
+	private final int SCALE = 2;
 	private Thread thread;
 	private boolean isRunning;
 	private BufferedImage image;
@@ -54,11 +55,11 @@ public class Game extends Canvas implements Runnable, KeyListener {
 		player = new Player(80,80,100,100);
 		gameObjects.add(player);
 		world = new World("/sprites/gfx/Map.png");
+		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+		ui = new UI();
 		addKeyListener(this);
 		this.setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
 		initFrame();
-		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-		ui = new UI();
 		requestFocus();
 	}
 
@@ -107,10 +108,8 @@ public class Game extends Canvas implements Runnable, KeyListener {
 		}
 
 		Graphics g = image.getGraphics();
-		
 		g.setColor(new Color(0,0,0));
 		g.fillRect(0, 0, WIDTH, HEIGHT);
-		g.dispose();
 		g = bs.getDrawGraphics();
 		g.drawImage(image, 0, 0, WIDTH * SCALE, HEIGHT * SCALE, null);
 
@@ -120,7 +119,7 @@ public class Game extends Canvas implements Runnable, KeyListener {
 		}
 		
 	    ui.render(g);
-
+	    g.dispose();
 		bs.show();
 	}
 	

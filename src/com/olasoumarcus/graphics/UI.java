@@ -1,6 +1,7 @@
 package com.olasoumarcus.graphics;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 
 import com.olasoumarcus.entities.Player;
@@ -17,5 +18,6 @@ public class UI {
 		
 		String text = (int)Game.player.life + "/" + Player.MAXLIFE;
 		g.drawString(text,30, 50);
+		g.drawString("Munição:"+ Game.player.ammo, 650, 40);
 	}
 }

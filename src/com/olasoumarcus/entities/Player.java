@@ -23,8 +23,11 @@ public class Player extends GameObject {
 	private int frames = 0, maxFrames = 5, index = 0, maxIndex = 2;
 	private boolean moved;
 	public double life = 100;
+	public int ammo = 10;
 	public static final int MAXLIFE = 100;
-
+	private BufferedImage playerDamage;
+	public boolean isDamage = false;
+	private int damageFrames = 0;
 	// walker down row 0
 	// walker up row 1
 	// walker right row 2
@@ -40,6 +43,8 @@ public class Player extends GameObject {
 		downPlayer = new BufferedImage[3];
 		leftPlayer = new BufferedImage[3];
 		rightPlayer = new BufferedImage[3];
+		
+		playerDamage = Game.PLAYER_SPRITE.getSprite(20, 40, 20, 20);
 
 		for (int i = 0; i < 3; i++) {
 			downPlayer[i] = Game.PLAYER_SPRITE.getSprite(0 + (20 * i), 1, 20, 20);
@@ -59,18 +64,21 @@ public class Player extends GameObject {
 	}
 
 	public void render(Graphics g) {
-		if (dir == top_dir) {
-			g.drawImage(topPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
-		} else if (dir == down_dir) {
-			g.drawImage(downPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
-		}
+		if (!isDamage) {
+			if (dir == top_dir) {
+				g.drawImage(topPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
+			} else if (dir == down_dir) {
+				g.drawImage(downPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
+			}
 
-		if (dir == right_dir) {
-			g.drawImage(rightPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
-		} else if (dir == left_dir) {
-			g.drawImage(leftPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
+			if (dir == right_dir) {
+				g.drawImage(rightPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
+			} else if (dir == left_dir) {
+				g.drawImage(leftPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
+			}			
+		} else {
+			g.drawImage(playerDamage, this.getX() - Camera.x, this.getY() - Camera.y, null);
 		}
-
 	}
 
 	public void tick() {
@@ -109,14 +117,31 @@ public class Player extends GameObject {
 			}
 		}
 		
+		if (isDamage) {
+			this.damageFrames++;
+			if (this.damageFrames == 30) {
+				this.damageFrames = 0;
+				isDamage = false;
+			}
+		}
+
+		if (life <= 0) {
+			Game.gameObjects = new ArrayList<GameObject>();
+			Game.enemies = new ArrayList<GameObject>();
+			Game.player = new Player(80,80,100,100);
+			Game.gameObjects.add(Game.player);
+			Game.world = new World("/sprites/gfx/Map.png");
+		    return;
+		}
+
 		Camera.x  = this.getX() - (Game.WIDTH/2);
 		Camera.y  = this.getY() - (Game.HEIGHT/2);
 		
 		checkCollisionLifePack();
+		checkCollisionBullet();
 	}
 	
 	public void checkCollisionLifePack() {
-		
 		for (int i = 0; i < Game.gameObjects.size(); i++) {
 			GameObject gm = Game.gameObjects.get(i);
 			if (gm == this) continue;
@@ -129,6 +154,23 @@ public class Player extends GameObject {
 				   if (life > 100) {
 					   life = 100;  
 				   }
+				   
+				   Game.gameObjects.remove(gm);
+			   }		
+			}
+		}
+	}
+	
+	public void checkCollisionBullet() {
+		for (int i = 0; i < Game.gameObjects.size(); i++) {
+			GameObject gm = Game.gameObjects.get(i);
+			if (gm == this) continue;
+			
+			if (gm instanceof Bullet) {
+			   if (IsColliding(gm.getX(), gm.getY())) {
+				   System.out.println("Aumentou bullet");
+				   ammo += 10;				   
+				   Game.gameObjects.remove(gm);
 			   }		
 			}
 		}

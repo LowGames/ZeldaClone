@@ -63,10 +63,7 @@ public class Enemy extends GameObject {
 			
 			if (Game.rand.nextInt(100) < 10) {
 				Game.player.life--;	
-			}
-
-			if (Game.player.life == 0) {
-				System.exit(1);
+				Game.player.isDamage = true;
 			}
 		} 
 	}

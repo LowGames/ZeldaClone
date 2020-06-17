@@ -27,9 +27,8 @@ public class World {
 			tiles = new Tile[WIDTH * HEIGHT];
 			for (int xx = 0; xx < map.getWidth(); xx++) {
 				for (int yy = 0; yy < map.getHeight(); yy++) {
-					int pixel = pixels[xx + (yy * map.getWidth())];
+					int pixel = pixels[xx + (yy * map.getWidth())];					
 					tiles[xx + (yy*WIDTH)] = new FloorTile(xx*16, yy*16, Tile.FLOOR);
-
 					switch (pixel) {
 					case Elements.Wall: {
 						tiles[xx + (yy*WIDTH)] = new WallTile(xx*16, yy*16, Tile.WALL);
