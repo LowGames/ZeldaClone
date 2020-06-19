@@ -22,7 +22,7 @@ public class Player extends GameObject {
 	private BufferedImage[] rightPlayer;
 	private int frames = 0, maxFrames = 5, index = 0, maxIndex = 2;
 	private boolean moved;
-	public double life = 100;
+	public double life = 1;
 	public int ammo = 1000;
 	public static final int MAXLIFE = 100;
 	private BufferedImage playerDamage;
@@ -41,7 +41,7 @@ public class Player extends GameObject {
 
 	public Player(double x, double y, int width, int height) {
 		super(x, y, width, height);
-
+		life = 100;
 		topPlayer = new BufferedImage[3];
 		downPlayer = new BufferedImage[3];
 		leftPlayer = new BufferedImage[3];
@@ -92,8 +92,8 @@ public class Player extends GameObject {
 	}
 
 	public void tick() {
-		Camera.x  = this.getX() - (Game.WIDTH/Game.SCALE);
-		Camera.y  = this.getY() - (Game.HEIGHT/Game.SCALE);
+		Camera.x  = this.getX() - (Game.WIDTH/2);
+		Camera.y  = this.getY() - (Game.HEIGHT/2);
 		moved = false;
 		if (right && World.isFree((int)x+speed, (int)y)) {
 			moved = true;
@@ -138,6 +138,8 @@ public class Player extends GameObject {
 		}
 
 		if (life <= 0) {
+			life = 0;
+			Game.state = "gameover";
 		    return;
 		}
 		
