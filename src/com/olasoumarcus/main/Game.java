@@ -7,6 +7,8 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -15,15 +17,17 @@ import java.util.Random;
 
 import javax.swing.JFrame;
 
+import com.olasoumarcus.entities.BulletShot;
 import com.olasoumarcus.entities.GameObject;
 import com.olasoumarcus.entities.Player;
 import com.olasoumarcus.graphics.SpriteSheet;
 import com.olasoumarcus.graphics.UI;
+import com.olasoumarcus.world.Camera;
 import com.olasoumarcus.world.World;
 
 import jdk.jshell.spi.SPIResolutionException;
 
-public class Game extends Canvas implements Runnable, KeyListener {
+public class Game extends Canvas implements Runnable, KeyListener, MouseListener {
 
 	/**
 	 * 
@@ -32,32 +36,39 @@ public class Game extends Canvas implements Runnable, KeyListener {
 	public static JFrame frame;
 	public static final int WIDTH = 360;
 	public static final int HEIGHT = 240;
-	private final int SCALE = 2;
+	public static final int SCALE = 3;
 	private Thread thread;
 	private boolean isRunning;
 	private BufferedImage image;
 	
 	public static List<GameObject> gameObjects;
 	public static List<GameObject> enemies;
+	public static List<BulletShot> shots;
+	public static List<GameObject> toDelete;
 	public static Player player;
 	public static World world;
 	public static SpriteSheet OBJECT_SPRITES;
 	public static SpriteSheet ENEMY_SPRITE;
 	public static SpriteSheet PLAYER_SPRITE;
+	public static SpriteSheet SWORD_SPRITE;
 	public static Random rand;
 	public static UI ui;
+	private int CUR_LEVEL = 1, MAX_LEVEL = 2;
 
 	public Game() {
 		rand = new Random();
 		loadSprites();
 		gameObjects = new ArrayList<GameObject>();
 		enemies = new ArrayList<GameObject>();
+		shots = new ArrayList<BulletShot>();
+		toDelete = new ArrayList<GameObject>();
 		player = new Player(80,80,100,100);
 		gameObjects.add(player);
-		world = new World("/sprites/gfx/Map.png");
+		world = new World("/sprites/gfx/MapLevel1.png");
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		ui = new UI();
 		addKeyListener(this);
+		addMouseListener(this);
 		this.setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
 		initFrame();
 		requestFocus();
@@ -98,6 +109,27 @@ public class Game extends Canvas implements Runnable, KeyListener {
 		for (GameObject gameObject : gameObjects) {
 			gameObject.tick();
 		}
+		
+		for (int i = 0; i < shots.size(); i++) {
+			BulletShot shot = shots.get(i);
+			shot.tick();
+		}
+		
+		for (GameObject gameObject : toDelete) {
+			gameObjects.remove(gameObject);
+		}
+
+		toDelete.clear();
+		
+		if (enemies.isEmpty()) {
+			System.out.println("Passou de Fase..");
+			CUR_LEVEL++;
+			if (CUR_LEVEL > MAX_LEVEL) {
+				CUR_LEVEL = 1;
+			}
+			String newWorld = "mapLevel"+CUR_LEVEL+".png";
+			World.restartGame(newWorld);
+		}
 	}
 	
 	public void render() {
@@ -118,6 +150,11 @@ public class Game extends Canvas implements Runnable, KeyListener {
 			gameObject.render(g);
 		}
 		
+		for (int i = 0; i < shots.size(); i++) {
+			BulletShot shot = shots.get(i);
+			shot.render(g);
+		}
+		
 	    ui.render(g);
 	    g.dispose();
 		bs.show();
@@ -127,6 +164,7 @@ public class Game extends Canvas implements Runnable, KeyListener {
 		OBJECT_SPRITES = new SpriteSheet("/sprites/gfx/objects.png");
 		ENEMY_SPRITE = new SpriteSheet("/sprites/gfx/Enemy.png");
 		PLAYER_SPRITE = new SpriteSheet("/sprites/gfx/Player.png");
+		SWORD_SPRITE = new SpriteSheet("/sprites/gfx/swordsprites.png");
 	}
 
 	@Override
@@ -149,7 +187,7 @@ public class Game extends Canvas implements Runnable, KeyListener {
 			}
 
 			if (System.currentTimeMillis() - timer >= 1000) {
-				System.out.println("FPS:" + frames);
+				//System.out.println("FPS:" + frames);
 				frames = 0;
 				timer+=1000;
 			}
@@ -181,6 +219,10 @@ public class Game extends Canvas implements Runnable, KeyListener {
 			player.down = true;
 		}
 		
+		if (keycode == KeyEvent.VK_SPACE) {
+			player.shoot = true;
+		}
+		
 	}
 
 	@Override
@@ -200,6 +242,42 @@ public class Game extends Canvas implements Runnable, KeyListener {
 		else if (keycode == KeyEvent.VK_DOWN || keycode == KeyEvent.VK_S) {
 			player.down = false;
 		}
+		
+		if (keycode == KeyEvent.VK_SPACE) {
+			player.shoot = false;
+		}
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		player.mouseshoot = true;
+		
+		// pegando eventos do mouse
+		player.mx = (e.getX() / SCALE);
+		player.my = (e.getY() / SCALE);
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
 		
 	}
 

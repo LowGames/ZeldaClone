@@ -2,6 +2,7 @@ package com.olasoumarcus.world;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
@@ -100,5 +101,13 @@ public class World {
 				tiles[x2 + (y2*World.WIDTH)] instanceof WallTile &&
 				tiles[x3 + (y3*World.WIDTH)] instanceof WallTile &&
 				tiles[x4 + (y4*World.WIDTH)] instanceof WallTile);*/
-	}	
+	}
+	
+	public static void restartGame(String level) {
+		Game.gameObjects = new ArrayList<GameObject>();
+		Game.enemies = new ArrayList<GameObject>();
+		Game.player = new Player(80,80,100,100);
+		Game.gameObjects.add(Game.player);
+		Game.world = new World("/sprites/gfx/"+level);
+	}
 }

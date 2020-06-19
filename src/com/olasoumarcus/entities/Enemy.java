@@ -6,7 +6,6 @@ import java.awt.image.BufferedImage;
 
 import com.olasoumarcus.main.Game;
 import com.olasoumarcus.world.Camera;
-import com.olasoumarcus.world.ItemTile;
 import com.olasoumarcus.world.World;
 
 public class Enemy extends GameObject {
@@ -14,6 +13,9 @@ public class Enemy extends GameObject {
 	private double speed = 0.4;
 	private int frames = 0, maxFrames = 20, index = 0, maxIndex = 2;
 	private BufferedImage[] animations;
+	private int life = 3;
+	private boolean isDamaged = false;
+	private int damageFrames = 0;
 	
 	public Enemy(double x, double y, int width, int height) {
 		super(x, y, width, height);
@@ -27,7 +29,11 @@ public class Enemy extends GameObject {
 	
 	
 	public void render(Graphics g) {
-		g.drawImage(animations[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
+		if (isDamaged) {
+			g.drawImage(GameObject.ENEMY_FEEDBACK, this.getX() - Camera.x, this.getY() - Camera.y, null);
+		} else {
+			g.drawImage(animations[index], this.getX() - Camera.x, this.getY() - Camera.y, null);	
+		}
 	}
 	
 	public void tick() {
@@ -66,6 +72,16 @@ public class Enemy extends GameObject {
 				Game.player.isDamage = true;
 			}
 		} 
+		
+		IsCollidingWithBulletShoot();
+		
+		if (isDamaged) {
+			this.damageFrames++;
+			if (this.damageFrames == 30) {
+				this.damageFrames = 0;
+				isDamaged = false;
+			}
+		}
 	}
 	
 	public boolean IsColliding(int xnext, int ynext) {
@@ -88,5 +104,27 @@ public class Enemy extends GameObject {
 		Rectangle player = new Rectangle(Game.player.getX(), Game.player.getY() ,World.TILE_SIZE, World.TILE_SIZE);
 		
 		return enemycurrent.intersects(player);
+	}
+	
+	public void IsCollidingWithBulletShoot() {
+		Rectangle enemycurrent = new Rectangle(this.getX(), this.getY(),World.TILE_SIZE, World.TILE_SIZE);
+		for (int i = 0; i < Game.shots.size(); i++) {
+			BulletShot e  = Game.shots.get(i);
+			Rectangle targetcurrent = new Rectangle(e.getX(),e.getY(),World.TILE_SIZE, World.TILE_SIZE);
+			
+			if (enemycurrent.intersects(targetcurrent) && !Game.toDelete.contains(e)) {
+				isDamaged = true;
+				life--;
+
+				System.out.println("inimigo perdendo vida..");
+				Game.shots.remove(e);
+				if (life <= 0) {
+					System.out.println("Morreu");
+					Game.toDelete.add(this);
+					Game.enemies.remove(this);
+					break;
+				}
+			}
+		}
 	}
 }

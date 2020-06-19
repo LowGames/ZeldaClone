@@ -23,11 +23,14 @@ public class Player extends GameObject {
 	private int frames = 0, maxFrames = 5, index = 0, maxIndex = 2;
 	private boolean moved;
 	public double life = 100;
-	public int ammo = 10;
+	public int ammo = 1000;
 	public static final int MAXLIFE = 100;
 	private BufferedImage playerDamage;
 	public boolean isDamage = false;
 	private int damageFrames = 0;
+	private boolean hasGun;
+	public static boolean shoot = false, mouseshoot = false;
+	public int mx, my;
 	// walker down row 0
 	// walker up row 1
 	// walker right row 2
@@ -69,12 +72,19 @@ public class Player extends GameObject {
 				g.drawImage(topPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
 			} else if (dir == down_dir) {
 				g.drawImage(downPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
+				
 			}
 
 			if (dir == right_dir) {
 				g.drawImage(rightPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
+				if (hasGun) {
+					g.drawImage(Game.SWORD_SPRITE.getSprite(0, 0, 16, 16), this.getX() - Camera.x + 11, this.getY() - Camera.y + 3, null);
+				}
 			} else if (dir == left_dir) {
 				g.drawImage(leftPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
+				if (hasGun) {
+					g.drawImage(Game.SWORD_SPRITE.getSprite(16, 0, 16, 16), this.getX() - Camera.x - 14 , this.getY() - Camera.y + 3, null);
+				}
 			}			
 		} else {
 			g.drawImage(playerDamage, this.getX() - Camera.x, this.getY() - Camera.y, null);
@@ -82,6 +92,8 @@ public class Player extends GameObject {
 	}
 
 	public void tick() {
+		Camera.x  = this.getX() - (Game.WIDTH/Game.SCALE);
+		Camera.y  = this.getY() - (Game.HEIGHT/Game.SCALE);
 		moved = false;
 		if (right && World.isFree((int)x+speed, (int)y)) {
 			moved = true;
@@ -126,19 +138,48 @@ public class Player extends GameObject {
 		}
 
 		if (life <= 0) {
-			Game.gameObjects = new ArrayList<GameObject>();
-			Game.enemies = new ArrayList<GameObject>();
-			Game.player = new Player(80,80,100,100);
-			Game.gameObjects.add(Game.player);
-			Game.world = new World("/sprites/gfx/Map.png");
 		    return;
 		}
+		
+		if (shoot && hasGun && ammo > 0) {
+			ammo--;
+			shoot = false;
+			System.out.println("Atirando...");
+			int dx = 0;
+			int px = 0;
+			int py = 8;
+			if (dir == right_dir) {
+				px = 16;
+				dx = 1;
+			} else {
+				px = 4;
+				dx = -1;
+			}
+			
+			BulletShot shot = new BulletShot(this.getX() + px, this.getY() + py, 3, 3, dx, 0);
+			Game.shots.add(shot);
+		}
+		
+		if (mouseshoot && hasGun && ammo > 0) {
+			ammo--;
+			mouseshoot = false;
+			System.out.println("Atirando...");
 
-		Camera.x  = this.getX() - (Game.WIDTH/2);
-		Camera.y  = this.getY() - (Game.HEIGHT/2);
+			// Recuperar o ângulo
+			double angle = Math.toDegrees(Math.atan2(my - this.getY() - Camera.y, mx - (this.getX() - Camera.x)));
+			System.out.println("ângulo:"+ angle);
+			double dx = Math.cos(angle);
+			double dy = Math.sin(angle);
+			int px = 8;
+			int py = 8;
+			
+			BulletShot shot = new BulletShot(this.getX() + px, this.getY() + py, Game.SCALE, Game.SCALE, dx, dy);
+			Game.shots.add(shot);
+		}
 		
 		checkCollisionLifePack();
 		checkCollisionBullet();
+		checkCollisionWeapon();
 	}
 	
 	public void checkCollisionLifePack() {
@@ -154,8 +195,7 @@ public class Player extends GameObject {
 				   if (life > 100) {
 					   life = 100;  
 				   }
-				   
-				   Game.gameObjects.remove(gm);
+				   Game.toDelete.add(gm);
 			   }		
 			}
 		}
@@ -170,7 +210,22 @@ public class Player extends GameObject {
 			   if (IsColliding(gm.getX(), gm.getY())) {
 				   System.out.println("Aumentou bullet");
 				   ammo += 10;				   
-				   Game.gameObjects.remove(gm);
+				   Game.toDelete.add(gm);
+			   }		
+			}
+		}
+	}
+	
+	public void checkCollisionWeapon() {
+		for (int i = 0; i < Game.gameObjects.size(); i++) {
+			GameObject gm = Game.gameObjects.get(i);
+			if (gm == this) continue;
+			
+			if (gm instanceof Weapon) {
+			   if (IsColliding(gm.getX(), gm.getY())) {
+				   System.out.println("Pegou a arma");
+				   hasGun = true;
+				   Game.toDelete.add(gm);
 			   }		
 			}
 		}

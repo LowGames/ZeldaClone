@@ -12,7 +12,8 @@ public class GameObject {
 	public static BufferedImage LIFE = Game.OBJECT_SPRITES.getSprite(80, 0, 16, 16);
 	public static BufferedImage WEAPON = Game.OBJECT_SPRITES.getSprite(3*16, 4*16, 16, 16);
 	public static BufferedImage ENEMY_HORSE = Game.ENEMY_SPRITE.getSprite(4*16, 16, 16, 16);
-	
+	public static BufferedImage ENEMY_FEEDBACK = Game.ENEMY_SPRITE.getSprite(2*16, 16, 16, 16);
+
 	protected double x;
 	protected double y;
 	protected int width;
