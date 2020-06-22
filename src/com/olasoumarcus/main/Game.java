@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 import com.olasoumarcus.entities.BulletShot;
@@ -68,6 +69,8 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	private boolean restartgame = false, saveGame;
 	public int mx, my;
 	public int[] pixels;
+	public BufferedImage lightmap;
+	public int[] lightMapPixels;
 
 	public Game() {
 		Sound.musicBackground.play();
@@ -86,6 +89,13 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		gameObjects.add(player);
 		world = new World("/sprites/gfx/MapLevel1.png");
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+		try {
+			lightmap = ImageIO.read(getClass().getResource("/sprites/gfx/LightMap.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		lightMapPixels = new int[lightmap.getWidth()*lightmap.getHeight()];
+		lightmap.getRGB(0,0, lightmap.getWidth(), lightmap.getHeight(),lightMapPixels,0,lightmap.getWidth());
 		ui = new UI();
 		menu = new Menu();
 		pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
@@ -176,6 +186,16 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		
 	}
 	
+	public void applyLight() {
+		for (int x = 0; x < Game.WIDTH; x++) {
+			for (int y = 0; y < Game.HEIGHT; y++) {
+				if (lightMapPixels[x +(y* Game.WIDTH)] == 0xffffffff) {
+					pixels[x +(y* Game.WIDTH)] = 0;
+				}
+			}
+		}
+	}
+	
 	public void render() {
 		BufferStrategy bs = this.getBufferStrategy();
 		if (bs == null) {
@@ -196,7 +216,8 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			BulletShot shot = shots.get(i);
 			shot.render(g);
 		}
-		
+
+		applyLight();
 		ui.render(g);
 	    g.dispose();
 		g = bs.getDrawGraphics();

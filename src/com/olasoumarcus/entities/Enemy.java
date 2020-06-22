@@ -40,18 +40,18 @@ public class Enemy extends GameObject {
 		if (this.calculateDistance(this.getX(), this.getY(),Game.player.getX(), Game.player.getY()) < 200) {
 			if (!isCollingWithPlayer()) {
 				if (Game.rand.nextInt(100) < 50) {
-					if ((int)x < Game.player.getX() && !IsColliding((int)(x+speed), this.getY())) {
+					if ((int)x < Game.player.getX() && !IsColliding((int)(x+speed), this.getY()) && World.isFree((int)(x+speed),(int)y)) {
 						x+=speed;
 					}
-					else if ((int)x > Game.player.getX() && !IsColliding((int)(x-speed), this.getY())) {
+					else if ((int)x > Game.player.getX() && !IsColliding((int)(x-speed), this.getY()) && World.isFree((int)(x-speed),(int)y)) {
 						x-=speed;
 					}
 					
-					else if ((int)y < Game.player.getY() && !IsColliding(this.getX(), (int) (y+speed))) {
+					else if ((int)y < Game.player.getY() && !IsColliding(this.getX(), (int) (y+speed)) && World.isFree((int)x,(int)(y+speed))) {
 						y+=speed;
 					}
 					
-					else if ((int)y > Game.player.getY() && !IsColliding(this.getX(), (int) (y-speed))) {
+					else if ((int)y > Game.player.getY() && !IsColliding(this.getX(), (int) (y-speed)) && World.isFree((int)x,(int)(y-speed))) {
 						y-=speed;
 					}
 					

@@ -13,7 +13,7 @@ import com.olasoumarcus.world.World;
 public class Player extends GameObject {
 
 	public boolean right, up, left, down;
-	private int speed = 4;
+	private int speed = 2;
 	public int dir = 3;
 	private int right_dir = 0, left_dir = 1, top_dir = 2, down_dir = 3;
 	private BufferedImage[] topPlayer;
@@ -124,9 +124,6 @@ public class Player extends GameObject {
 				}
 	    }
 		
-		
-		Camera.x  = this.getX() - (Game.WIDTH/2);
-		Camera.y  = this.getY() - (Game.HEIGHT/2);
 		moved = false;
 		if (right && World.isFree((int)x+speed, (int)y)) {
 			moved = true;
@@ -215,6 +212,12 @@ public class Player extends GameObject {
 		checkCollisionLifePack();
 		checkCollisionBullet();
 		checkCollisionWeapon();
+		updateCamera();
+	}
+	
+	public void updateCamera() {
+		Camera.x = Camera.clamp(this.getX() - (Game.WIDTH/2),0,World.WIDTH*16 - Game.WIDTH);
+		Camera.y = Camera.clamp(this.getY() - (Game.HEIGHT/2),0,World.HEIGHT*16 - Game.HEIGHT);
 	}
 	
 	public void checkCollisionLifePack() {
