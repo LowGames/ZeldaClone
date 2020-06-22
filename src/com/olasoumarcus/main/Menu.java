@@ -101,7 +101,7 @@ public class Menu {
     	g.drawImage(background, 0, 0, null);
     	g2.setColor(Color.white);
     	g.setFont(new Font("arial", Font.BOLD,28));
-    	g2.drawString(">Curso na DankiCode<", (Game.WIDTH * Game.SCALE)/2  - 110 , (Game.HEIGHT * Game.SCALE) /2 - 30);
+    	g2.drawString(">Olá, sou Marcus<", (Game.WIDTH * Game.SCALE)/2  - 110 , (Game.HEIGHT * Game.SCALE) /2 - 30);
     	g.setFont(new Font("arial", Font.BOLD,20));
     	int heightcurrent = (Game.HEIGHT * Game.SCALE) /2;
     	for (String option : options) {
