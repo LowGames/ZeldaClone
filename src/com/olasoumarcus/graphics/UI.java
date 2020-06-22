@@ -11,13 +11,13 @@ public class UI {
 	
 	public void render(Graphics g) {
 		g.setColor(Color.RED);
-		g.fillRect(20, 20, 50, 20);
+		g.fillRect(10, 10, 50, 20);
 		g.setColor(Color.GREEN);
-		g.fillRect(20, 20, (int)((Game.player.life/Player.MAXLIFE)*50), 20);
+		g.fillRect(10, 10, (int)((Game.player.life/Player.MAXLIFE)*50), 20);
 		g.setColor(Color.white);
 		
 		String text = (int)Game.player.life + "/" + Player.MAXLIFE;
-		g.drawString(text,30, 50);
-		g.drawString("Munição:"+ Game.player.ammo, 650, 40);
+		g.drawString(text,10, 40);
+		g.drawString("Munição:"+ Game.player.ammo, 160, 20);
 	}
 }

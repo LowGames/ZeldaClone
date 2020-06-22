@@ -37,42 +37,46 @@ public class Enemy extends GameObject {
 	}
 	
 	public void tick() {
-		if (!isCollingWithPlayer()) {
-			if (Game.rand.nextInt(100) < 50) {
-				if ((int)x < Game.player.getX() && !IsColliding((int)(x+speed), this.getY())) {
-					x+=speed;
-				}
-				else if ((int)x > Game.player.getX() && !IsColliding((int)(x-speed), this.getY())) {
-					x-=speed;
-				}
-				
-				else if ((int)y < Game.player.getY() && !IsColliding(this.getX(), (int) (y+speed))) {
-					y+=speed;
-				}
-				
-				else if ((int)y > Game.player.getY() && !IsColliding(this.getX(), (int) (y-speed))) {
-					y-=speed;
-				}
-				
-				
-				frames++;
-				if (frames == maxFrames) {
-					frames = 0;
-					index++;
+		if (this.calculateDistance(this.getX(), this.getY(),Game.player.getX(), Game.player.getY()) < 200) {
+			if (!isCollingWithPlayer()) {
+				if (Game.rand.nextInt(100) < 50) {
+					if ((int)x < Game.player.getX() && !IsColliding((int)(x+speed), this.getY())) {
+						x+=speed;
+					}
+					else if ((int)x > Game.player.getX() && !IsColliding((int)(x-speed), this.getY())) {
+						x-=speed;
+					}
+					
+					else if ((int)y < Game.player.getY() && !IsColliding(this.getX(), (int) (y+speed))) {
+						y+=speed;
+					}
+					
+					else if ((int)y > Game.player.getY() && !IsColliding(this.getX(), (int) (y-speed))) {
+						y-=speed;
+					}
+					
+					
+					frames++;
+					if (frames == maxFrames) {
+						frames = 0;
+						index++;
 
-					if (index > maxIndex) {
-						index = 0;
+						if (index > maxIndex) {
+							index = 0;
+						}
 					}
 				}
-			}
-		} else {
-			
-			if (Game.rand.nextInt(100) < 10) {
-				Game.player.life--;	
-				Game.player.isDamage = true;
-			}
-		} 
+			} else {
+				
+				if (Game.rand.nextInt(100) < 10) {
+					Game.player.life--;	
+					Game.player.isDamage = true;
+				}
+			} 
+	
+		}
 		
+				
 		IsCollidingWithBulletShoot();
 		
 		if (isDamaged) {

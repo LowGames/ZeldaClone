@@ -4,14 +4,19 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -28,19 +33,21 @@ import com.olasoumarcus.world.World;
 
 import jdk.jshell.spi.SPIResolutionException;
 
-public class Game extends Canvas implements Runnable, KeyListener, MouseListener {
+public class Game extends Canvas implements Runnable, KeyListener, MouseListener, MouseMotionListener {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	public static JFrame frame;
-	public static final int WIDTH = 360;
-	public static final int HEIGHT = 240;
+	public static final int WIDTH = 240;
+	public static final int HEIGHT = 160;
 	public static final int SCALE = 3;
 	private Thread thread;
 	private boolean isRunning;
 	private BufferedImage image;
+	public InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("pixel.ttf");
+	public static Font font;
 	
 	public static List<GameObject> gameObjects;
 	public static List<GameObject> enemies;
@@ -59,9 +66,16 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	public static String state = "menu";
 	private int maxRender = 30, render =0;
 	private boolean restartgame = false, saveGame;
+	public int mx, my;
+	public int[] pixels;
 
 	public Game() {
 		Sound.musicBackground.play();
+		try {
+			font = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(16f);
+		} catch (FontFormatException | IOException e) {
+			e.printStackTrace();
+		}
 		rand = new Random();
 		loadSprites();
 		gameObjects = new ArrayList<GameObject>();
@@ -74,8 +88,10 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		ui = new UI();
 		menu = new Menu();
+		pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 		addKeyListener(this);
 		addMouseListener(this);
+		addMouseMotionListener(this);
 		this.setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
 		initFrame();
 		requestFocus();
@@ -170,8 +186,6 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		Graphics g = image.getGraphics();
 		g.setColor(new Color(0,0,0));
 		g.fillRect(0, 0, WIDTH, HEIGHT);
-		g = bs.getDrawGraphics();
-		g.drawImage(image, 0, 0, WIDTH * SCALE, HEIGHT * SCALE, null);
 
 		world.render(g);
 		for (GameObject gameObject : gameObjects) {
@@ -183,8 +197,11 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			shot.render(g);
 		}
 		
-	    ui.render(g);
-	    
+		ui.render(g);
+	    g.dispose();
+		g = bs.getDrawGraphics();
+		g.drawImage(image, 0, 0, WIDTH * SCALE, HEIGHT * SCALE, null);
+		
 	    if (Game.state == "gameover") {
 	    	Graphics2D g2 = (Graphics2D) g;
 	    	g2.setColor(new Color(0,0,0,100));
@@ -210,7 +227,14 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	    	menu.render(g);
 	    }
 	    
-	    g.dispose();
+	    // Criando rotação de objetos.
+	    /*
+	    Graphics2D g2 = (Graphics2D) g;
+	    double angleMouse = Math.atan2(225-my,225-mx);
+	    g2.rotate(angleMouse, 200+25,200+25);
+	    g.setColor(Color.red);
+	    g.fillRect(200, 200, 50, 50);
+	    */
 		bs.show();
 	}
 	
@@ -363,6 +387,19 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		// TODO Auto-generated method stub
+		this.mx = e.getX();
+		this.my = e.getY();
 	}
 
 }

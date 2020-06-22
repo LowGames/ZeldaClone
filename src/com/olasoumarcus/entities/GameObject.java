@@ -58,4 +58,9 @@ public class GameObject {
 	public void tick() {
 		
 	}
+
+	public double calculateDistance(int x1, int y1, int x2, int y2) {
+		// calculando distancia entre dois pontos em ambiente 2d , caso de 3d seria: (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2) + (z1-z2)*(z1-z2) 
+		return Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
+	}
 }
