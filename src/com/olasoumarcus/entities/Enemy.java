@@ -5,7 +5,9 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 import com.olasoumarcus.main.Game;
+import com.olasoumarcus.world.AStart;
 import com.olasoumarcus.world.Camera;
+import com.olasoumarcus.world.Vector2I;
 import com.olasoumarcus.world.World;
 
 public class Enemy extends GameObject {
@@ -37,7 +39,7 @@ public class Enemy extends GameObject {
 	}
 	
 	public void tick() {
-		if (this.calculateDistance(this.getX(), this.getY(),Game.player.getX(), Game.player.getY()) < 200) {
+		/* if (this.calculateDistance(this.getX(), this.getY(),Game.player.getX(), Game.player.getY()) < 200) {
 			if (!isCollingWithPlayer()) {
 				if (Game.rand.nextInt(100) < 50) {
 					if ((int)x < Game.player.getX() && !IsColliding((int)(x+speed), this.getY()) && World.isFree((int)(x+speed),(int)y)) {
@@ -54,17 +56,6 @@ public class Enemy extends GameObject {
 					else if ((int)y > Game.player.getY() && !IsColliding(this.getX(), (int) (y-speed)) && World.isFree((int)x,(int)(y-speed))) {
 						y-=speed;
 					}
-					
-					
-					frames++;
-					if (frames == maxFrames) {
-						frames = 0;
-						index++;
-
-						if (index > maxIndex) {
-							index = 0;
-						}
-					}
 				}
 			} else {
 				
@@ -72,8 +63,25 @@ public class Enemy extends GameObject {
 					Game.player.life--;	
 					Game.player.isDamage = true;
 				}
-			} 
-	
+			}
+		}*/
+		
+		if (path == null || path.size() == 0) {
+			Vector2I start = new Vector2I((int)(x/16), (int)(y/16));
+			Vector2I end = new Vector2I((int)(Game.player.x/16),(int) (Game.player.y/16));
+			path = AStart.findPath(Game.world, start, end);
+		}
+		
+		FollowPath(path);
+		
+		frames++;
+		if (frames == maxFrames) {
+			frames = 0;
+			index++;
+
+			if (index > maxIndex) {
+				index = 0;
+			}
 		}
 		
 				

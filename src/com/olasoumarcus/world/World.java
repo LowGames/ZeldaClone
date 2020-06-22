@@ -79,9 +79,12 @@ public class World {
 		
 		for(int xx = xstart; xx <= xfinal; xx++) {
 			for(int yy = ystart; yy <= yfinal; yy++) {
-				if(xx < 0 || yy < 0 || xx >= WIDTH || yy >= HEIGHT)
+				int index = xx + (yy*WIDTH);
+				
+				if(xx < 0 || yy < 0 || xx >= WIDTH || yy >= HEIGHT || index < 0)
 					continue;
-				Tile tile = tiles[xx + (yy*WIDTH)];
+
+				Tile tile = tiles[index];
 				tile.render(g);
 			}
 		}

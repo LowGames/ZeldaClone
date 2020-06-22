@@ -40,10 +40,11 @@ public class AStart {
 		openList.add(current);
 		
 		while (!openList.isEmpty()) {
+
 			Collections.sort(openList, nodeSorter);
 			current = openList.get(0);
 			
-			if (current.equals(end)) {
+			if (current.tile.equals(end)) {
 				List<Node> path = new ArrayList<Node>();
 				
 				while (current.parent != null) {
@@ -79,15 +80,15 @@ public class AStart {
 
 				 if (i == 0) {
 					 Tile test = World.tiles[x+xi+1+((y+yi)*World.WIDTH)];
-					 Tile test2 = World.tiles[x+xi+1+((y+yi)*World.WIDTH)];
+					 Tile test2 = World.tiles[x+xi+((y+yi+1)*World.WIDTH)];
 					 
 					 if (test instanceof WallTile || test2 instanceof WallTile) {
 						 continue;
 					 }
 				 }
 				 else if (i == 2) {
-					 Tile test = World.tiles[x+xi+1+((y+yi)*World.WIDTH)];
-					 Tile test2 = World.tiles[x+xi+((y+yi)*World.WIDTH)];
+					 Tile test = World.tiles[x+xi-1+((y+yi)*World.WIDTH)];
+					 Tile test2 = World.tiles[x+xi+((y+yi+1)*World.WIDTH)];
 					 
 					 if (test instanceof WallTile || test2 instanceof WallTile) {
 						 continue;

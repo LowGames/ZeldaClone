@@ -41,8 +41,8 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	 */
 	private static final long serialVersionUID = 1L;
 	public static JFrame frame;
-	public static final int WIDTH = 240;
-	public static final int HEIGHT = 160;
+	public static final int WIDTH = 360;
+	public static final int HEIGHT = 240;
 	public static final int SCALE = 3;
 	private Thread thread;
 	private boolean isRunning;
@@ -187,13 +187,18 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	}
 	
 	public void applyLight() {
-		for (int x = 0; x < Game.WIDTH; x++) {
+	 /*	for (int x = 0; x < Game.WIDTH; x++) {
 			for (int y = 0; y < Game.HEIGHT; y++) {
-				if (lightMapPixels[x +(y* Game.WIDTH)] == 0xffffffff) {
+				int index = x +(y* Game.WIDTH);
+				if(x < 0 || y < 0 || x >= WIDTH || y >= HEIGHT || index < 0)
+					continue;
+
+				if (lightMapPixels[index] != null && lightMapPixels[index] == 0xffffffff) {
 					pixels[x +(y* Game.WIDTH)] = 0;
 				}
 			}
 		}
+		*/
 	}
 	
 	public void render() {
