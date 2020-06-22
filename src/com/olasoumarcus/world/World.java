@@ -82,25 +82,25 @@ public class World {
 	}
 	
 	public static boolean isFree(int xnext, int ynext) {
-		
-		return true;
-		/* int x1 = xnext / TILE_SIZE;
+		int x1 = xnext / TILE_SIZE;
 		int y1 = ynext / TILE_SIZE;
 		
-		int x2 = (xnext + TILE_SIZE -1)  / TILE_SIZE;
+		int x2 = (xnext + TILE_SIZE - 2)  / TILE_SIZE;
 		int y2 = ynext / TILE_SIZE;
 		
 		int x3 = xnext/ TILE_SIZE;
-		int y3 = (ynext + TILE_SIZE -1) / TILE_SIZE;
+		int y3 = (ynext + TILE_SIZE -2) / TILE_SIZE;
 		
-		int x4 = (xnext + TILE_SIZE -1) / TILE_SIZE;
-		int y4 = (ynext + TILE_SIZE -1)  / TILE_SIZE;
+		int x4 = (xnext + TILE_SIZE -2) / TILE_SIZE;
+		int y4 = (ynext + TILE_SIZE -2)  / TILE_SIZE;
 		
-		return !(
+		boolean collisionWalltile = !(
 				tiles[x1 + (y1*World.WIDTH)] instanceof WallTile &&
 				tiles[x2 + (y2*World.WIDTH)] instanceof WallTile &&
 				tiles[x3 + (y3*World.WIDTH)] instanceof WallTile &&
-				tiles[x4 + (y4*World.WIDTH)] instanceof WallTile);*/
+				tiles[x4 + (y4*World.WIDTH)] instanceof WallTile);
+					
+		return collisionWalltile;
 	}
 	
 	public static void restartGame(String level) {

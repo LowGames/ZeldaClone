@@ -20,7 +20,7 @@ public class Player extends GameObject {
 	private BufferedImage[] downPlayer;
 	private BufferedImage[] leftPlayer;
 	private BufferedImage[] rightPlayer;
-	private int frames = 0, maxFrames = 5, index = 0, maxIndex = 2;
+	private int frames = 0, maxFrames = 5, index = 0, maxIndex = 2 , jumpFrames = 50, jumpCur = 0;
 	private boolean moved;
 	public double life = 1;
 	public int ammo = 1000;
@@ -29,8 +29,9 @@ public class Player extends GameObject {
 	public boolean isDamage = false;
 	private int damageFrames = 0;
 	private boolean hasGun;
-	public static boolean shoot = false, mouseshoot = false;
+	public static boolean shoot = false, mouseshoot = false , jump = false , isjumping = false , jumpup = false, jumpdown=false;
 	public int mx, my;
+	public int eixoz = 0;
 	// walker down row 0
 	// walker up row 1
 	// walker right row 2
@@ -69,29 +70,61 @@ public class Player extends GameObject {
 	public void render(Graphics g) {
 		if (!isDamage) {
 			if (dir == top_dir) {
-				g.drawImage(topPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
+				g.drawImage(topPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y - eixoz, null);
 			} else if (dir == down_dir) {
-				g.drawImage(downPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
-				
+				g.drawImage(downPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y - eixoz, null);
 			}
 
 			if (dir == right_dir) {
-				g.drawImage(rightPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
+				g.drawImage(rightPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y - eixoz , null);
 				if (hasGun) {
-					g.drawImage(Game.SWORD_SPRITE.getSprite(0, 0, 16, 16), this.getX() - Camera.x + 11, this.getY() - Camera.y + 3, null);
+					g.drawImage(Game.SWORD_SPRITE.getSprite(0, 0, 16, 16), this.getX() - Camera.x + 11, this.getY() - Camera.y + 3 - eixoz, null);
 				}
 			} else if (dir == left_dir) {
-				g.drawImage(leftPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
+				g.drawImage(leftPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y - eixoz, null);
 				if (hasGun) {
-					g.drawImage(Game.SWORD_SPRITE.getSprite(16, 0, 16, 16), this.getX() - Camera.x - 14 , this.getY() - Camera.y + 3, null);
+					g.drawImage(Game.SWORD_SPRITE.getSprite(16, 0, 16, 16), this.getX() - Camera.x - 14 , this.getY() - Camera.y + 3 - eixoz, null);
 				}
 			}			
 		} else {
-			g.drawImage(playerDamage, this.getX() - Camera.x, this.getY() - Camera.y, null);
+			g.drawImage(playerDamage, this.getX() - Camera.x, this.getY() - Camera.y - eixoz, null);
 		}
 	}
 
 	public void tick() {
+		if (jump) {
+			System.out.print("pulou");
+			if (isjumping == false) {
+				jump = false;
+				isjumping = true;
+				jumpup = true;
+			}
+		}
+		
+		if (isjumping == true) {
+			System.out.println("jumpinggg");
+				if (jumpup) {
+					jumpCur++;
+				}
+				
+				else if (jumpdown) {
+					jumpCur--;
+					
+					if (jumpCur <= 0) {
+						isjumping = false;
+						jumpdown = false;
+						jumpup = true;
+					}
+				}
+				
+				eixoz = jumpCur;
+				if (jumpCur >= jumpFrames) {
+					jumpup= false;
+					jumpdown= true;
+				}
+	    }
+		
+		
 		Camera.x  = this.getX() - (Game.WIDTH/2);
 		Camera.y  = this.getY() - (Game.HEIGHT/2);
 		moved = false;
