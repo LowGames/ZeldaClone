@@ -12,7 +12,7 @@ import com.olasoumarcus.main.Game;
 
 public class World {
 
-	private static Tile[] tiles;
+	public static Tile[] tiles;
 	public static int WIDTH, HEIGHT;
 	public static SpriteSheet PIECES_WORLD_SPRITE;
 	public static final int TILE_SIZE = 16;
