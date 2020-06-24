@@ -57,6 +57,7 @@ public class Menu {
 		}
 		
 		if (enter) {
+			Sound.music.loop();
 			System.out.print(options[currentOption]);
 			if (options[currentOption] == "novo jogo") {
 				Game.state = "normal";
@@ -153,7 +154,7 @@ public class Menu {
 		String[] spl = str.split("/");
 		for (int i = 0; i < spl.length; i++) {
 			String[] result = spl[i].split(":");
-			if (result[0] == "level") {
+			if (result[0].equals("level")) {
 				String newWorld = "mapLevel"+result[1]+".png";
 				World.restartGame(newWorld);
 				Game.state = "normal";

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.olasoumarcus.main.Game;
+import com.olasoumarcus.main.Sound;
 import com.olasoumarcus.world.Camera;
 import com.olasoumarcus.world.World;
 
@@ -23,7 +24,7 @@ public class Player extends GameObject {
 	private int frames = 0, maxFrames = 5, index = 0, maxIndex = 2 , jumpFrames = 50, jumpCur = 0;
 	private boolean moved;
 	public double life = 1;
-	public int ammo = 1000;
+	public int ammo = 0;
 	public static final int MAXLIFE = 100;
 	private BufferedImage playerDamage;
 	public boolean isDamage = false;
@@ -32,13 +33,6 @@ public class Player extends GameObject {
 	public static boolean shoot = false, mouseshoot = false , jump = false , isjumping = false , jumpup = false, jumpdown=false;
 	public int mx, my;
 	public int eixoz = 0;
-	// walker down row 0
-	// walker up row 1
-	// walker right row 2
-	// walker left row 3
-
-	// cada row 19 y
-	// cada column 20 x
 
 	public Player(double x, double y, int width, int height) {
 		super(x, y, width, height);
@@ -66,6 +60,14 @@ public class Player extends GameObject {
 			rightPlayer[i] = Game.PLAYER_SPRITE.getSprite((20 * i), 60, 20, 20);
 		}
 	}
+	
+	public boolean isRight() {
+		return dir == right_dir;
+	}
+	
+	public boolean isLeft() {
+		return dir == left_dir;
+	}
 
 	public void render(Graphics g) {
 		if (!isDamage) {
@@ -78,12 +80,12 @@ public class Player extends GameObject {
 			if (dir == right_dir) {
 				g.drawImage(rightPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y - eixoz , null);
 				if (hasGun) {
-					g.drawImage(Game.SWORD_SPRITE.getSprite(0, 0, 16, 16), this.getX() - Camera.x + 11, this.getY() - Camera.y + 3 - eixoz, null);
+					g.drawImage(GameObject.WEAPON_ARROW_RIGHT, this.getX() - Camera.x + 8, this.getY() - Camera.y + 3 - eixoz, null);
 				}
 			} else if (dir == left_dir) {
 				g.drawImage(leftPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y - eixoz, null);
 				if (hasGun) {
-					g.drawImage(Game.SWORD_SPRITE.getSprite(16, 0, 16, 16), this.getX() - Camera.x - 14 , this.getY() - Camera.y + 3 - eixoz, null);
+					g.drawImage(GameObject.WEAPON_ARROW_LEFT, this.getX() - Camera.x - 9 , this.getY() - Camera.y + 3 - eixoz, null);
 				}
 			}			
 		} else {
@@ -92,6 +94,7 @@ public class Player extends GameObject {
 	}
 
 	public void tick() {
+		depth = 1;
 		if (jump) {
 			System.out.print("pulou");
 			if (isjumping == false) {
@@ -174,6 +177,7 @@ public class Player extends GameObject {
 		}
 		
 		if (shoot && hasGun && ammo > 0) {
+			Sound.tiroplayer.Play();
 			ammo--;
 			shoot = false;
 			System.out.println("Atirando...");
@@ -193,12 +197,13 @@ public class Player extends GameObject {
 		}
 		
 		if (mouseshoot && hasGun && ammo > 0) {
+			Sound.tiroplayer.Play();
 			ammo--;
 			mouseshoot = false;
 			System.out.println("Atirando...");
 
 			// Recuperar o ângulo
-			double angle = Math.toDegrees(Math.atan2(my - this.getY() - Camera.y, mx - (this.getX() - Camera.x)));
+			double angle = Math.atan2(my - this.getY() - Camera.y, mx - (this.getX() - Camera.x));
 			System.out.println("ângulo:"+ angle);
 			double dx = Math.cos(angle);
 			double dy = Math.sin(angle);
@@ -247,7 +252,7 @@ public class Player extends GameObject {
 			if (gm instanceof Bullet) {
 			   if (IsColliding(gm.getX(), gm.getY())) {
 				   System.out.println("Aumentou bullet");
-				   ammo += 10;				   
+				   ammo += 50;				   
 				   Game.toDelete.add(gm);
 			   }		
 			}

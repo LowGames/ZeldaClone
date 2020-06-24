@@ -12,6 +12,6 @@ public class Weapon extends GameObject {
 	}
 
 	public void render(Graphics g) {
-		g.drawImage(GameObject.WEAPON, this.getX() - Camera.x, this.getY() - Camera.y, null);
+		g.drawImage(GameObject.WEAPON_ARROW_RIGHT, this.getX() - Camera.x, this.getY() - Camera.y, null);
 	}
 }

@@ -31,8 +31,13 @@ public class BulletShot extends GameObject {
 	}
 	
 	public void render(Graphics g) {
-		g.setColor(Color.red);
-		g.fillOval(this.getX() - Camera.x,  this.getY() - Camera.y, width, height);
+		if (Game.player.isRight()) {
+			g.drawImage(GameObject.ARROW_RIGHT, this.getX() - Camera.x,  this.getY() - Camera.y - 5 , null);
+		}
+		else if (Game.player.isLeft())
+		{ 
+			g.drawImage(GameObject.ARROW_LEFT, this.getX() - Camera.x,  this.getY() - Camera.y - 5, null);			
+		}
 	}
 
 }

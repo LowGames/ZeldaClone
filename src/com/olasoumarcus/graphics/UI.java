@@ -18,6 +18,6 @@ public class UI {
 		
 		String text = (int)Game.player.life + "/" + Player.MAXLIFE;
 		g.drawString(text,10, 40);
-		g.drawString("Munição:"+ Game.player.ammo, 160, 20);
+		g.drawString("Munição:"+ Game.player.ammo, 280, 30);
 	}
 }

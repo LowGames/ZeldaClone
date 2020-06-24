@@ -5,6 +5,7 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 import com.olasoumarcus.main.Game;
+import com.olasoumarcus.main.Sound;
 import com.olasoumarcus.world.AStart;
 import com.olasoumarcus.world.Camera;
 import com.olasoumarcus.world.Vector2I;
@@ -13,32 +14,63 @@ import com.olasoumarcus.world.World;
 public class Enemy extends GameObject {
 
 	private double speed = 0.4;
-	private int frames = 0, maxFrames = 20, index = 0, maxIndex = 2;
-	private BufferedImage[] animations;
+	private int frames = 0, maxFrames = 20, index = 0, maxIndex = 3;
+	private BufferedImage[] animations_right;
+	private BufferedImage[] animations_left;
 	private int life = 3;
 	private boolean isDamaged = false;
 	private int damageFrames = 0;
 	
-	public Enemy(double x, double y, int width, int height) {
+	public Enemy(double x, double y, int width, int height, EnumEnemies typeEnemy) {
 		super(x, y, width, height);
 		// TODO Auto-generated constructor stub
-		 animations = new BufferedImage[3];
+		animations_right = new BufferedImage[4];
+		animations_left = new BufferedImage[4];
 		
-		for (int i = 0; i < 3; i++) {
-			animations[i] = Game.ENEMY_SPRITE.getSprite((4*16) + (16 * i), 16, 16, 16);
+		if (typeEnemy == EnumEnemies.globin) {
+			
+			// y 16 esquerda e 32 direita 
+			for (int i = 0; i <= 3; i++) {
+				animations_right[i] = Game.DUNGEON_SPRITE.getSprite((16*i),32, 16, 16);
+				animations_left[i] = Game.DUNGEON_SPRITE.getSprite((16*i), 16, 16, 16);
+			}
 		}
+		else if (typeEnemy == EnumEnemies.smile) {
+			System.out.print("smile");
+			// y 48 esquerda e 64 direita			
+			for (int i = 0; i <= 3; i++) {
+				animations_left[i] = Game.DUNGEON_SPRITE.getSprite((16 * i), 48, 16, 16);
+				animations_right[i] = Game.DUNGEON_SPRITE.getSprite((16 * i), 64, 16, 16);
+			}
+		}
+		else if (typeEnemy == EnumEnemies.soldier) {
+			System.out.print("soldier");
+			// y 80 esquerda e 96 direita
+			for (int i = 0; i <= 3; i++) {
+				animations_right[i] = Game.DUNGEON_SPRITE.getSprite((16 * i), 96, 16, 16);
+				animations_left[i] = Game.DUNGEON_SPRITE.getSprite((16 * i), 80, 16, 16);
+			}
+		}
+		 
+		 
+		 
+/*		for (int i = 0; i < 3; i++) {
+			animations[i] = Game.ENEMY_SPRITE.getSprite((4*16) + (16 * i), 16, 16, 16);
+		}*/
+		
 	}
 	
 	
-	public void render(Graphics g) {
-		if (isDamaged) {
-			g.drawImage(GameObject.ENEMY_FEEDBACK, this.getX() - Camera.x, this.getY() - Camera.y, null);
+	public void render(Graphics g) {	
+		if (isright) {
+			g.drawImage(animations_right[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
 		} else {
-			g.drawImage(animations[index], this.getX() - Camera.x, this.getY() - Camera.y, null);	
-		}
+			g.drawImage(animations_left[index], this.getX() - Camera.x, this.getY() - Camera.y, null);			
+		}			
 	}
 	
 	public void tick() {
+		depth = 0;
 		/* if (this.calculateDistance(this.getX(), this.getY(),Game.player.getX(), Game.player.getY()) < 200) {
 			if (!isCollingWithPlayer()) {
 				if (Game.rand.nextInt(100) < 50) {
@@ -65,11 +97,20 @@ public class Enemy extends GameObject {
 				}
 			}
 		}*/
-		
-		if (path == null || path.size() == 0) {
-			Vector2I start = new Vector2I((int)(x/16), (int)(y/16));
-			Vector2I end = new Vector2I((int)(Game.player.x/16),(int) (Game.player.y/16));
-			path = AStart.findPath(Game.world, start, end);
+
+		if (!isCollingWithPlayer()) {
+			if (path == null || path.size() == 0) {
+				Vector2I start = new Vector2I((int)(x/16), (int)(y/16));
+				Vector2I end = new Vector2I((int)(Game.player.x/16),(int) (Game.player.y/16));
+				path = AStart.findPath(Game.world, start, end);
+			}
+		}
+		else  {
+			if (Game.rand.nextInt(100) < 10) {
+				Sound.hurt.Play();
+				Game.player.life--;	
+				Game.player.isDamage = true;
+			}
 		}
 		
 		FollowPath(path);

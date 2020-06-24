@@ -9,4 +9,6 @@ public class Elements {
 	public static final int Player = 0xFF0026FF;
 	public static final int Boss = 0xFFFF6A00;
 	public static final int Floor = 0xFF000000;
+	public static final int Ammo = 0xFF582C19;
+	public static final int Tree = 0xFF7F3F76;
 }

@@ -18,6 +18,7 @@ import java.awt.image.DataBufferInt;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -47,6 +48,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	private Thread thread;
 	private boolean isRunning;
 	private BufferedImage image;
+	public static BufferedImage minimap;
 	public InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("pixel.ttf");
 	public static Font font;
 	
@@ -58,8 +60,9 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	public static World world;
 	public static SpriteSheet OBJECT_SPRITES;
 	public static SpriteSheet ENEMY_SPRITE;
+	public static SpriteSheet DUNGEON_SPRITE;
 	public static SpriteSheet PLAYER_SPRITE;
-	public static SpriteSheet SWORD_SPRITE;
+	public static SpriteSheet WEAPON_SPRITE;
 	public static Random rand;
 	public static UI ui;
 	public static Menu menu;
@@ -71,9 +74,9 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	public int[] pixels;
 	public BufferedImage lightmap;
 	public int[] lightMapPixels;
+	public static int[] miniMapPixels;
 
 	public Game() {
-		Sound.musicBackground.play();
 		try {
 			font = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(16f);
 		} catch (FontFormatException | IOException e) {
@@ -88,6 +91,8 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		player = new Player(80,80,100,100);
 		gameObjects.add(player);
 		world = new World("/sprites/gfx/MapLevel1.png");
+		minimap = new BufferedImage(World.WIDTH, World.HEIGHT, BufferedImage.TYPE_INT_RGB);
+		miniMapPixels = ((DataBufferInt) minimap.getRaster().getDataBuffer()).getData();
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		try {
 			lightmap = ImageIO.read(getClass().getResource("/sprites/gfx/LightMap.png"));
@@ -213,6 +218,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		g.fillRect(0, 0, WIDTH, HEIGHT);
 
 		world.render(g);
+		Collections.sort(gameObjects, GameObject.depthSorter);
 		for (GameObject gameObject : gameObjects) {
 			gameObject.render(g);
 		}
@@ -261,6 +267,9 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	    g.setColor(Color.red);
 	    g.fillRect(200, 200, 50, 50);
 	    */
+	    
+	    World.renderMiniMap();
+	    g.drawImage(minimap, 900,600, World.WIDTH*5, World.HEIGHT*5, null);
 		bs.show();
 	}
 	
@@ -268,7 +277,8 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		OBJECT_SPRITES = new SpriteSheet("/sprites/gfx/objects.png");
 		ENEMY_SPRITE = new SpriteSheet("/sprites/gfx/Enemy.png");
 		PLAYER_SPRITE = new SpriteSheet("/sprites/gfx/Player.png");
-		SWORD_SPRITE = new SpriteSheet("/sprites/gfx/swordsprites.png");
+		WEAPON_SPRITE = new SpriteSheet("/sprites/gfx/weaponspritesheet.png");
+		DUNGEON_SPRITE = new SpriteSheet("/sprites/gfx/DungeonSpriteSheet.png");
 	}
 
 	@Override

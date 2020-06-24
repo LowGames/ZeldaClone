@@ -8,8 +8,8 @@ public class Tile {
 	public static BufferedImage WALL = World.PIECES_WORLD_SPRITE.getSprite(304, 208, 16, 16);
 	public static BufferedImage WallWolrd = World.PIECES_WORLD_SPRITE.getSprite(304, 208, 16, 16);
 
-	private BufferedImage sprite;
-	private int x, y;
+	protected BufferedImage sprite;
+	protected int x, y;
 	
 	public Tile(int x, int y, BufferedImage sprite) {
 		this.x = x;
