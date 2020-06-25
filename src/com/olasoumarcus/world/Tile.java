@@ -3,11 +3,12 @@ package com.olasoumarcus.world;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
-public class Tile {
-	public static BufferedImage FLOOR = World.PIECES_WORLD_SPRITE.getSprite(0, 0, 16, 16);
-	public static BufferedImage WALL = World.PIECES_WORLD_SPRITE.getSprite(304, 208, 16, 16);
-	public static BufferedImage WallWolrd = World.PIECES_WORLD_SPRITE.getSprite(304, 208, 16, 16);
+import com.olasoumarcus.main.Game;
 
+public class Tile {
+	public static BufferedImage FLOOR = Game.PIECES_WORLD_SPRITE.getSprite(0, 0, 16, 16);
+	public static BufferedImage WALL = Game.PIECES_WORLD_SPRITE.getSprite(304, 208, 16, 16);
+	public static BufferedImage WallWolrd = Game.PIECES_WORLD_SPRITE.getSprite(304, 208, 16, 16);
 	protected BufferedImage sprite;
 	protected int x, y;
 	

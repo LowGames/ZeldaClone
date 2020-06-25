@@ -36,7 +36,7 @@ public class Enemy extends GameObject {
 			}
 		}
 		else if (typeEnemy == EnumEnemies.smile) {
-			System.out.print("smile");
+			//System.out.print("smile");
 			// y 48 esquerda e 64 direita			
 			for (int i = 0; i <= 3; i++) {
 				animations_left[i] = Game.DUNGEON_SPRITE.getSprite((16 * i), 48, 16, 16);
@@ -44,7 +44,7 @@ public class Enemy extends GameObject {
 			}
 		}
 		else if (typeEnemy == EnumEnemies.soldier) {
-			System.out.print("soldier");
+			//System.out.print("soldier");
 			// y 80 esquerda e 96 direita
 			for (int i = 0; i <= 3; i++) {
 				animations_right[i] = Game.DUNGEON_SPRITE.getSprite((16 * i), 96, 16, 16);
@@ -107,9 +107,9 @@ public class Enemy extends GameObject {
 		}
 		else  {
 			if (Game.rand.nextInt(100) < 10) {
-				Sound.hurt.Play();
+				/*Sound.hurt.Play();
 				Game.player.life--;	
-				Game.player.isDamage = true;
+				Game.player.isDamage = true; */
 			}
 		}
 		

@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Random;
 
@@ -26,14 +27,14 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 import com.olasoumarcus.entities.BulletShot;
+import com.olasoumarcus.entities.EnumEnemies;
 import com.olasoumarcus.entities.GameObject;
 import com.olasoumarcus.entities.Player;
 import com.olasoumarcus.graphics.SpriteSheet;
 import com.olasoumarcus.graphics.UI;
 import com.olasoumarcus.world.Camera;
+import com.olasoumarcus.world.Map;
 import com.olasoumarcus.world.World;
-
-import jdk.jshell.spi.SPIResolutionException;
 
 public class Game extends Canvas implements Runnable, KeyListener, MouseListener, MouseMotionListener {
 
@@ -42,8 +43,8 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	 */
 	private static final long serialVersionUID = 1L;
 	public static JFrame frame;
-	public static final int WIDTH = 360;
-	public static final int HEIGHT = 240;
+	public static final int WIDTH = 240;
+	public static final int HEIGHT = 160;
 	public static final int SCALE = 3;
 	private Thread thread;
 	private boolean isRunning;
@@ -63,10 +64,11 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	public static SpriteSheet DUNGEON_SPRITE;
 	public static SpriteSheet PLAYER_SPRITE;
 	public static SpriteSheet WEAPON_SPRITE;
+	public static SpriteSheet PIECES_WORLD_SPRITE;
 	public static Random rand;
 	public static UI ui;
 	public static Menu menu;
-	public static int CUR_LEVEL = 1, MAX_LEVEL = 2;
+	public static int CUR_LEVEL = 1, MAX_LEVEL = 3;
 	public static String state = "menu";
 	private int maxRender = 30, render =0;
 	private boolean restartgame = false, saveGame;
@@ -75,8 +77,22 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	public BufferedImage lightmap;
 	public int[] lightMapPixels;
 	public static int[] miniMapPixels;
+	public static Hashtable<Integer, String> flowMaps = new Hashtable<Integer, String>();;
+	public static Hashtable<Integer, EnumEnemies> flowEnemies = new Hashtable<Integer, EnumEnemies>();;
+	
+	private int maxIndexMap;
 
 	public Game() {
+		flowMaps.put(1,"/sprites/gfx/MapLevel1.png");
+		flowMaps.put(2, "/sprites/gfx/MapLevel2.png");
+		flowMaps.put(3, "/sprites/gfx/MapLevel3.png");
+		
+		flowEnemies.put(1, EnumEnemies.smile);
+		flowEnemies.put(2, EnumEnemies.globin);
+		flowEnemies.put(3, EnumEnemies.soldier);
+		
+		maxIndexMap = flowEnemies.size();
+		
 		try {
 			font = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(16f);
 		} catch (FontFormatException | IOException e) {
@@ -90,7 +106,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		toDelete = new ArrayList<GameObject>();
 		player = new Player(80,80,100,100);
 		gameObjects.add(player);
-		world = new World("/sprites/gfx/MapLevel1.png");
+		world = new World(new Map(flowMaps.get(CUR_LEVEL), flowEnemies.get(CUR_LEVEL)));
 		minimap = new BufferedImage(World.WIDTH, World.HEIGHT, BufferedImage.TYPE_INT_RGB);
 		miniMapPixels = ((DataBufferInt) minimap.getRaster().getDataBuffer()).getData();
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
@@ -174,8 +190,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 				if (CUR_LEVEL > MAX_LEVEL) {
 					CUR_LEVEL = 1;
 				}
-				String newWorld = "mapLevel"+CUR_LEVEL+".png";
-				World.restartGame(newWorld);
+				World.restartGame(new Map(flowMaps.get(CUR_LEVEL), flowEnemies.get(CUR_LEVEL)));
 			}
 		} else if (state == "menu") {
 			menu.tick();
@@ -184,26 +199,25 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		if (restartgame) {
 			Game.state = "normal";
 			CUR_LEVEL = 1;
-			String newWorld = "mapLevel"+CUR_LEVEL+".png";
-			World.restartGame(newWorld);
+			World.restartGame(new Map(flowMaps.get(CUR_LEVEL), flowEnemies.get(CUR_LEVEL)));
 			restartgame = false;
 		}
 		
 	}
 	
 	public void applyLight() {
-	 /*	for (int x = 0; x < Game.WIDTH; x++) {
+	 for (int x = 0; x < Game.WIDTH; x++) {
 			for (int y = 0; y < Game.HEIGHT; y++) {
 				int index = x +(y* Game.WIDTH);
 				if(x < 0 || y < 0 || x >= WIDTH || y >= HEIGHT || index < 0)
 					continue;
 
-				if (lightMapPixels[index] != null && lightMapPixels[index] == 0xffffffff) {
+				if (lightMapPixels[index] == 0xffffffff) {
 					pixels[x +(y* Game.WIDTH)] = 0;
 				}
 			}
 		}
-		*/
+		
 	}
 	
 	public void render() {
@@ -228,7 +242,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			shot.render(g);
 		}
 
-		applyLight();
+		//applyLight();
 		ui.render(g);
 	    g.dispose();
 		g = bs.getDrawGraphics();
@@ -268,8 +282,11 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	    g.fillRect(200, 200, 50, 50);
 	    */
 	    
-	    World.renderMiniMap();
-	    g.drawImage(minimap, 900,600, World.WIDTH*5, World.HEIGHT*5, null);
+	    if (Game.state == "normal") {
+	    	World.renderMiniMap();
+		    g.drawImage(minimap, 600,350, World.WIDTH*2, World.HEIGHT*2, null);
+	    }
+
 		bs.show();
 	}
 	
@@ -279,6 +296,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		PLAYER_SPRITE = new SpriteSheet("/sprites/gfx/Player.png");
 		WEAPON_SPRITE = new SpriteSheet("/sprites/gfx/weaponspritesheet.png");
 		DUNGEON_SPRITE = new SpriteSheet("/sprites/gfx/DungeonSpriteSheet.png");
+		PIECES_WORLD_SPRITE = new SpriteSheet("/sprites/gfx/Overworld.png");
 	}
 
 	@Override

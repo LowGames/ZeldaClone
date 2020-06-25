@@ -95,6 +95,7 @@ public class Player extends GameObject {
 
 	public void tick() {
 		depth = 1;
+		updateCamera();
 		if (jump) {
 			System.out.print("pulou");
 			if (isjumping == false) {
@@ -217,12 +218,11 @@ public class Player extends GameObject {
 		checkCollisionLifePack();
 		checkCollisionBullet();
 		checkCollisionWeapon();
-		updateCamera();
 	}
 	
 	public void updateCamera() {
-		Camera.x = Camera.clamp(this.getX() - (Game.WIDTH/2),0,World.WIDTH*16 - Game.WIDTH);
-		Camera.y = Camera.clamp(this.getY() - (Game.HEIGHT/2),0,World.HEIGHT*16 - Game.HEIGHT);
+		Camera.x = Camera.clamp(this.getX() - (Game.WIDTH/Game.SCALE),0,World.WIDTH*16 - Game.WIDTH);
+		Camera.y = Camera.clamp(this.getY() - (Game.HEIGHT/Game.SCALE),0,World.HEIGHT*16 - Game.HEIGHT);
 	}
 	
 	public void checkCollisionLifePack() {

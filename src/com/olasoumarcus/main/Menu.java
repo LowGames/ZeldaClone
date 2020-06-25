@@ -13,6 +13,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import com.olasoumarcus.graphics.SpriteSheet;
+import com.olasoumarcus.world.Map;
 import com.olasoumarcus.world.World;
 
 public class Menu {
@@ -155,8 +156,9 @@ public class Menu {
 		for (int i = 0; i < spl.length; i++) {
 			String[] result = spl[i].split(":");
 			if (result[0].equals("level")) {
-				String newWorld = "mapLevel"+result[1]+".png";
-				World.restartGame(newWorld);
+				int level = Integer.parseInt(result[1]);
+				World.restartGame(new Map(Game.flowMaps.get(level), Game.flowEnemies.get(level)));
+				Game.CUR_LEVEL = level;
 				Game.state = "normal";
 				pause = true;
 			}

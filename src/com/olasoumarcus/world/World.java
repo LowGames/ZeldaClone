@@ -3,6 +3,7 @@ package com.olasoumarcus.world;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
@@ -18,65 +19,15 @@ public class World {
 	public static SpriteSheet PIECES_WORLD_SPRITE;
 	public static final int TILE_SIZE = 16;
 	private static int[] pixels;
-	private static BufferedImage map;
-	
-	public World(String path) {
-		PIECES_WORLD_SPRITE = new SpriteSheet("/sprites/gfx/Overworld.png");		
-		try {
-			map = ImageIO.read(getClass().getResource(path));
-			pixels = new int[map.getWidth() * map.getHeight()];
-			map.getRGB(0, 0, map.getWidth(), map.getHeight(), pixels, 0, map.getWidth());
-			WIDTH = map.getWidth();
-			HEIGHT = map.getHeight();
-			tiles = new Tile[WIDTH * HEIGHT];
-			for (int xx = 0; xx < map.getWidth(); xx++) {
-				for (int yy = 0; yy < map.getHeight(); yy++) {
-					int pixel = pixels[xx + (yy * map.getWidth())];					
-					tiles[xx + (yy*WIDTH)] = new FloorTile(xx*16, yy*16, Tile.FLOOR);
-					switch (pixel) {
-					case Elements.Wall: {
-						tiles[xx + (yy*WIDTH)] = new WallTile(xx*16, yy*16, Tile.WALL);
-						break;
-					}
-					case Elements.WallWorld: {
-						tiles[xx + (yy*WIDTH)] = new WallTile(xx*16, yy*16, Tile.WallWolrd);
-						break;
-					}					
-					case Elements.Life: {
-						LifePack lf = new LifePack(xx*16, yy*16, 16,16);
-						Game.gameObjects.add(lf);
-						break;
-					}
-					case Elements.Weapon: {
-						Weapon wp = new Weapon(xx*16, yy*16, 16,16);
-						Game.gameObjects.add(wp);
-						break;
-					}
-					case Elements.Ammo: {
-						System.out.println("Ammo");
-						Bullet bl = new Bullet(xx*16, yy*16, 16,16);
-						Game.gameObjects.add(bl);
-						break;
-					}
-					case Elements.Enemy: {						
-						Enemy en = new Enemy(xx*16, yy*16, 16, 16, EnumEnemies.smile);
-						Game.gameObjects.add(en);
-						Game.enemies.add(en);
-						break;
-					}
-					case Elements.Player: {
-						Game.player.setX(xx*16);
-						Game.player.setY(yy*16);
-						break;
-					}				
-					default:
-						//throw new IllegalArgumentException("Unexpected value: " + pixel);
-					}
-				}
-			}	
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public static Map mapCurrent;
+
+	public World(Map map) {
+		System.out.print("passou pleo construtor.");
+		this.mapCurrent = map;
+		tiles = this.mapCurrent.getTiles();
+		WIDTH = map.WIDTH;
+		HEIGHT = map.HEIGHT;
+		pixels = map.getPixels();
 	}
 
 	public void render(Graphics g){
@@ -88,12 +39,12 @@ public class World {
 		
 		for(int xx = xstart; xx <= xfinal; xx++) {
 			for(int yy = ystart; yy <= yfinal; yy++) {
-				int index = xx + (yy*WIDTH);
+				int index = xx + (yy*mapCurrent.WIDTH);
 				
-				if(xx < 0 || yy < 0 || xx >= WIDTH || yy >= HEIGHT || index < 0)
+				if(xx < 0 || yy < 0 || xx >= mapCurrent.WIDTH || yy >= mapCurrent.HEIGHT || index < 0)
 					continue;
 
-				Tile tile = tiles[index];
+				Tile tile = World.mapCurrent.tiles[index];
 				tile.render(g);
 			}
 		}
@@ -114,7 +65,11 @@ public class World {
 					continue;
 				
 				if (tiles[index] instanceof WallTile) {
-					int pixel = pixels[xx + (yy * map.getWidth())];
+					int pixel = pixels[xx + (yy * WIDTH)];
+
+					if(xx < 0 || yy < 0 || xx >= WIDTH || yy >= HEIGHT || index < 0)
+						continue;
+
 					Game.miniMapPixels[xx + (yy*WIDTH)] = pixel;
 				}
 			}
@@ -139,29 +94,29 @@ public class World {
 		int x1 = xnext / TILE_SIZE;
 		int y1 = ynext / TILE_SIZE;
 		
-		int x2 = (xnext + TILE_SIZE - 2)  / TILE_SIZE;
+		int x2 = (xnext+TILE_SIZE-1) / TILE_SIZE;
 		int y2 = ynext / TILE_SIZE;
 		
-		int x3 = xnext/ TILE_SIZE;
-		int y3 = (ynext + TILE_SIZE -2) / TILE_SIZE;
+		int x3 = xnext / TILE_SIZE;
+		int y3 = (ynext+TILE_SIZE-1) / TILE_SIZE;
 		
-		int x4 = (xnext + TILE_SIZE -2) / TILE_SIZE;
-		int y4 = (ynext + TILE_SIZE -2)  / TILE_SIZE;
+		int x4 = (xnext+TILE_SIZE-1) / TILE_SIZE;
+		int y4 = (ynext+TILE_SIZE-1) / TILE_SIZE;
 		
-		boolean collisionWalltile = !(
-				tiles[x1 + (y1*World.WIDTH)] instanceof WallTile &&
-				tiles[x2 + (y2*World.WIDTH)] instanceof WallTile &&
-				tiles[x3 + (y3*World.WIDTH)] instanceof WallTile &&
-				tiles[x4 + (y4*World.WIDTH)] instanceof WallTile);
-					
-		return collisionWalltile;
+		System.out.println(!((tiles[x1 + (y1*World.WIDTH)] instanceof WallTile) ||
+				(tiles[x2 + (y2*World.WIDTH)] instanceof WallTile) ||
+				(tiles[x3 + (y3*World.WIDTH)] instanceof WallTile) ||
+				(tiles[x4 + (y4*World.WIDTH)] instanceof WallTile)));
+		
+		return !((tiles[x1 + (y1*World.WIDTH)] instanceof WallTile) ||
+				(tiles[x2 + (y2*World.WIDTH)] instanceof WallTile) ||
+				(tiles[x3 + (y3*World.WIDTH)] instanceof WallTile) ||
+				(tiles[x4 + (y4*World.WIDTH)] instanceof WallTile));
 	}
 	
-	public static void restartGame(String level) {
-		Game.gameObjects = new ArrayList<GameObject>();
-		Game.enemies = new ArrayList<GameObject>();
-		Game.player = new Player(80,80,100,100);
-		Game.gameObjects.add(Game.player);
-		Game.world = new World("/sprites/gfx/"+level);
+	public static void restartGame(Map map) {
+		Game.world = new World(map);
+		Game.minimap = new BufferedImage(World.WIDTH, World.HEIGHT, BufferedImage.TYPE_INT_RGB);
+		Game.miniMapPixels = ((DataBufferInt) Game.minimap.getRaster().getDataBuffer()).getData();		
 	}
 }
