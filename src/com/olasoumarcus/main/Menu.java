@@ -58,7 +58,7 @@ public class Menu {
 		}
 		
 		if (enter) {
-			Sound.music.loop();
+			//Sound.music.loop();
 			System.out.print(options[currentOption]);
 			if (options[currentOption] == "novo jogo") {
 				Game.state = "normal";

@@ -129,23 +129,23 @@ public class Player extends GameObject {
 	    }
 		
 		moved = false;
-		if (right && World.isFree((int)x+speed, (int)y)) {
+		if (right && World.isFree((int)x+speed, this.getY())) {
 			moved = true;
 			this.x += speed;
 			dir = right_dir;
 		}
 
-		if (left && World.isFree((int)x-speed, (int)y)) {
+		if (left && World.isFree((int)x-speed, this.getY())) {
 			moved = true;
 			this.x -= speed;
 			dir = left_dir;
 		}
 
-		if (up && World.isFree((int)x, (int)y+speed)) {
+		if (up && World.isFree(this.getX(), (int)y-speed)) {
 			moved = true;
 			dir = top_dir;
 			this.y -= speed;
-		} else if (down && World.isFree((int)x, (int)y-speed)) {
+		} else if (down && World.isFree(this.getX(), (int)y+speed)) {
 			moved = true;
 			dir = down_dir;
 			this.y += speed;
