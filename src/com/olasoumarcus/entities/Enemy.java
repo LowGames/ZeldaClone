@@ -107,9 +107,9 @@ public class Enemy extends GameObject {
 		}
 		else  {
 			if (Game.rand.nextInt(100) < 10) {
-				/*Sound.hurt.Play();
+				Sound.hurt.Play();
 				Game.player.life--;	
-				Game.player.isDamage = true; */
+				Game.player.isDamage = true;
 			}
 		}
 		

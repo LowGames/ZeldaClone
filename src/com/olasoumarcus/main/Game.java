@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -45,7 +46,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	public static JFrame frame;
 	public static final int WIDTH = 240;
 	public static final int HEIGHT = 160;
-	public static final int SCALE = 3;
+	public static final int SCALE = 2;
 	private Thread thread;
 	private boolean isRunning;
 	private BufferedImage image;
@@ -77,10 +78,10 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	public BufferedImage lightmap;
 	public int[] lightMapPixels;
 	public static int[] miniMapPixels;
-	public static Hashtable<Integer, String> flowMaps = new Hashtable<Integer, String>();;
-	public static Hashtable<Integer, EnumEnemies> flowEnemies = new Hashtable<Integer, EnumEnemies>();;
-	
+	public static Hashtable<Integer, String> flowMaps = new Hashtable<Integer, String>();
+	public static Hashtable<Integer, EnumEnemies> flowEnemies = new Hashtable<Integer, EnumEnemies>();
 	private int maxIndexMap;
+	private boolean isSuspense = false;
 
 	public Game() {
 		flowMaps.put(1,"/sprites/gfx/MapLevel1.png");
@@ -123,7 +124,8 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		addKeyListener(this);
 		addMouseListener(this);
 		addMouseMotionListener(this);
-		this.setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
+		//this.setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
+		this.setPreferredSize(new Dimension(java.awt.Toolkit.getDefaultToolkit().getScreenSize()));
 		initFrame();
 		requestFocus();
 	}
@@ -152,6 +154,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		frame = new JFrame();
 		frame.add(this);
 		frame.setResizable(false);
+		frame.setUndecorated(true);
 		frame.pack();
 		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -185,12 +188,14 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			toDelete.clear();
 			
 			if (enemies.isEmpty()) {
+				Sound.nextLevel.Play();
 				System.out.println("Passou de Fase..");
 				CUR_LEVEL++;
 				if (CUR_LEVEL > MAX_LEVEL) {
 					CUR_LEVEL = 1;
 				}
 				World.restartGame(new Map(flowMaps.get(CUR_LEVEL), flowEnemies.get(CUR_LEVEL)));
+				isSuspense = false;
 			}
 		} else if (state == "menu") {
 			menu.tick();
@@ -201,6 +206,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			CUR_LEVEL = 1;
 			World.restartGame(new Map(flowMaps.get(CUR_LEVEL), flowEnemies.get(CUR_LEVEL)));
 			restartgame = false;
+			isSuspense = false;
 		}
 		
 	}
@@ -241,12 +247,22 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			BulletShot shot = shots.get(i);
 			shot.render(g);
 		}
+		
+		if (enemies.size() < 2) {
+			if (!isSuspense) {
+				Sound.suspense.Play();				
+			}
+			
+			isSuspense = true;
+			applyLight();
+		}
 
-		//applyLight();
 		ui.render(g);
+		
 	    g.dispose();
 		g = bs.getDrawGraphics();
-		g.drawImage(image, 0, 0, WIDTH * SCALE, HEIGHT * SCALE, null);
+
+		g.drawImage(image, 0, 0, java.awt.Toolkit.getDefaultToolkit().getScreenSize().width, java.awt.Toolkit.getDefaultToolkit().getScreenSize().height, null);
 		
 	    if (Game.state == "gameover") {
 	    	Graphics2D g2 = (Graphics2D) g;
@@ -284,7 +300,9 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	    
 	    if (Game.state == "normal") {
 	    	World.renderMiniMap();
-		    g.drawImage(minimap, 600,350, World.WIDTH*2, World.HEIGHT*2, null);
+			int width = Toolkit.getDefaultToolkit().getScreenSize().width;
+			int height = Toolkit.getDefaultToolkit().getScreenSize().height;
+		    g.drawImage(minimap, (int)(width*85/ 100),(int)(height*80/ 100), 200, 200, null);
 	    }
 
 		bs.show();

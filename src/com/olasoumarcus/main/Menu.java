@@ -99,18 +99,18 @@ public class Menu {
 	public void render(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
     	g2.setColor(Color.BLACK);
-    	g2.fillRect(0, 0, Game.WIDTH*Game.SCALE, Game.HEIGHT*Game.SCALE);
-    	g.drawImage(background, 0, 0, null);
+    	g2.fillRect(0, 0, java.awt.Toolkit.getDefaultToolkit().getScreenSize().width, java.awt.Toolkit.getDefaultToolkit().getScreenSize().height);
+    	g.drawImage(background, java.awt.Toolkit.getDefaultToolkit().getScreenSize().width/4, java.awt.Toolkit.getDefaultToolkit().getScreenSize().height/4, null);
     	g2.setColor(Color.white);
     	g.setFont(new Font("arial", Font.BOLD,28));
-    	g2.drawString(">Olá, sou Marcus<", (Game.WIDTH * Game.SCALE)/2  - 110 , (Game.HEIGHT * Game.SCALE) /2 - 30);
+    	g2.drawString(">Olá, sou Marcus<", java.awt.Toolkit.getDefaultToolkit().getScreenSize().width/2  - 110 , (Game.HEIGHT * Game.SCALE) /2 - 30);
     	g.setFont(new Font("arial", Font.BOLD,20));
     	int heightcurrent = (Game.HEIGHT * Game.SCALE) /2;
     	for (String option : options) {
-    		g2.drawString(option, (Game.WIDTH * Game.SCALE)/2  - 35 , heightcurrent);
+    		g2.drawString(option, java.awt.Toolkit.getDefaultToolkit().getScreenSize().width/2  - 35 , heightcurrent);
     		    		
     		if (options[currentOption] == option) {
-    			g2.drawString(">", (Game.WIDTH * Game.SCALE)/2  - 50 , heightcurrent);
+    			g2.drawString(">", java.awt.Toolkit.getDefaultToolkit().getScreenSize().width/2  - 50 , heightcurrent);
     		}
     		
     		heightcurrent+=30;

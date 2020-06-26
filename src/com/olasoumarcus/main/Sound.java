@@ -41,6 +41,8 @@ public class Sound {
 	public static Clips music = load("/music.wav", 1);
 	public static Clips hurt = load("/hurt.wav", 1);
 	public static Clips tiroplayer = load("/arrowHit.wav", 1);
+	public static Clips nextLevel = load("/nextLevel.wav", 1);
+	public static Clips suspense = load("/suspense.wav", 1);
 	
 	private static Clips load(String name, int count) {
 		try {
